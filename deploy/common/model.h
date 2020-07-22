@@ -1,5 +1,5 @@
-#ifndef _DEEPSORT_DEPLOY_COMMON_MODEL_H
-#define _DEEPSORT_DEPLOY_COMMON_MODEL_H
+#ifndef DEEPSORT_DEPLOY_COMMON_MODEL_H
+#define DEEPSORT_DEPLOY_COMMON_MODEL_H
 
 #include "datatype.h"
 
@@ -9,14 +9,18 @@
 // * confidence: detection confidence.
 // * feature: the rect's 128d feature.
 // */
-class DETECTION_ROW
-{
-public:
-    DETECTBOX tlwh;
-    float confidence;
-    FEATURE feature;
-    DETECTBOX to_xyah() const;
-    DETECTBOX to_tlbr() const;
-};
-
-#endif // _DEEPSORT_DEPLOY_COMMON_MODEL_H
+namespace deepsort {
+	
+	class DETECTION_ROW
+	{
+	public:
+		DETECTBOX tlwh;
+		float confidence;
+		FEATURE feature;
+		DETECTBOX to_xyah() const;
+		DETECTBOX to_tlbr() const;
+	};
+	
+	typedef std::vector<DETECTION_ROW> DETECTIONS;
+}
+#endif // DEEPSORT_DEPLOY_COMMON_MODEL_H
