@@ -4,6 +4,6 @@ file(GLOB DEEPSORT_COMMON_FILES common/*.h common/*.cpp)
 
 source_group(deepsort_common FILES ${DEEPSORT_COMMON_FILES})
 
-# yh_mnn dll library
+# deepsort dll library
 add_library(deepsort SHARED ${DEEPSORT_CORE_FILES} ${DEEPSORT_COMMON_FILES})
 target_link_libraries(deepsort ${OpenCV_LIBS})
