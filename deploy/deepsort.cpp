@@ -9,8 +9,8 @@ namespace deepsort {
   DeepSORT::~DeepSORT() {
   }
 
-  DETECTIONS load_detections(std::vector<ObjInfo>& obj_info); {
-      DETECTIONS detections;
+  int load_detections(std::vector<ObjInfo>& obj_info); {
+      
       for(int i = 0; i < obj_info.size(); i++)
       {
         DETECTION_ROW box;
@@ -19,9 +19,9 @@ namespace deepsort {
         {
           box.feature[j] = obj_info[i].ids_[j];
         }
-        detections.push_back(box);
+        detections_.push_back(box);
       }
-      return detections;
+      return 0;
 
   }
 }
