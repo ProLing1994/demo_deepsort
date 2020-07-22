@@ -21,7 +21,7 @@ namespace deepsort {
 		DeepSORT();
 		~DeepSORT();
 
-    int load_detections(float* net_outputs);
+    DETECTIONS load_detections(std::vector<ObjInfo>& obj_info);
 	private:
     OptionsDeepSORT options_deepsort_;
     std::vector<DETECTION_ROW> detections_;
