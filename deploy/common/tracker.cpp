@@ -1,7 +1,7 @@
 #include "tracker.h"
 #include "linear_assignment.h"
 
-#ifdef MY_inner_DEBUG
+#ifdef _DEBUG
 #include <string>
 #include <iostream>
 #endif
@@ -36,43 +36,43 @@ namespace deepsort {
 		_match(detections, res);
 
 		std::vector<MATCH_DATA>& matches = res.matches;
-		//#ifdef MY_inner_DEBUG
-		//    printf("res.matches size = %d:\n", matches.size());
-		//#endif
+		#ifdef _DEBUG
+		   printf("res.matches size = %d:\n", matches.size());
+		#endif
 		for(MATCH_DATA& data:matches) {
 			int track_idx = data.first;
 			int detection_idx = data.second;
-			//#ifdef MY_inner_DEBUG
-			//        printf("\t%d == %d;\n", track_idx, detection_idx);
-			//#endif
+			#ifdef _DEBUG
+			       printf("\t%d == %d;\n", track_idx, detection_idx);
+			#endif
 			tracks[track_idx].update(this->kf, detections[detection_idx]);
 		}
 		std::vector<int>& unmatched_tracks = res.unmatched_tracks;
-		//#ifdef MY_inner_DEBUG
-		//    printf("res.unmatched_tracks size = %d\n", unmatched_tracks.size());
-		//#endif
+		#ifdef _DEBUG
+		   printf("res.unmatched_tracks size = %d\n", unmatched_tracks.size());
+		#endif
 		for(int& track_idx:unmatched_tracks) {
 				this->tracks[track_idx].mark_missed();
 		}
 		std::vector<int>& unmatched_detections = res.unmatched_detections;
-		//#ifdef MY_inner_DEBUG
-		//    printf("res.unmatched_detections size = %d\n", unmatched_detections.size());
-		//#endif
+		#ifdef _DEBUG
+		   printf("res.unmatched_detections size = %d\n", unmatched_detections.size());
+		#endif
 		for(int& detection_idx:unmatched_detections) {
 				this->_initiate_track(detections[detection_idx]);
 		}
-		//#ifdef MY_inner_DEBUG
-		//    int size = tracks.size();
-		//    printf("now track size = %d\n", size);
-		//#endif
+		#ifdef _DEBUG
+		   int size = tracks.size();
+		   printf("now track size = %d\n", size);
+		#endif
 		std::vector<Track>::iterator it;
 		for(it = tracks.begin(); it != tracks.end();) {
 				if((*it).is_deleted()) it = tracks.erase(it);
 				else ++it;
 		}
-		//#ifdef MY_inner_DEBUG
-		//    printf("update track size = %d\n", tracks.size());
-		//#endif
+		#ifdef _DEBUG
+		   printf("update track size = %d\n", tracks.size());
+		#endif
 
 		/* old version:
 		//update distance metric:
@@ -102,7 +102,7 @@ namespace deepsort {
 				FEATURESS t = FEATURESS(0, 128);
 				track.features = t;
 		}
-		this->metric->partial_fit(tid_features, active_targets);
+  		this->metric->partial_fit(tid_features, active_targets);
 }
 
 void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
@@ -252,9 +252,9 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 			float area_candidates = candidates(i, 2) * candidates(i, 3);
 			res[i] = area_intersection/(area_bbox + area_candidates - area_intersection);
 		}
-		//#ifdef MY_inner_DEBUG
-		//        std::cout << res << std::endl;
-		//#endif
+		#ifdef _DEBUG
+			std::cout << res << std::endl;
+		#endif
 		return res;
 	}
 }

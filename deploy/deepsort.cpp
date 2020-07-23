@@ -36,6 +36,7 @@ namespace deepsort {
   int DeepSORT::update() {
     tracker_->predict();
     tracker_->update(detections_);
+    detections_.clear();
   }
 
   int DeepSORT::get_results(std::vector<ObjInfo>* obj_info, std::vector<int>* obj_id) {
