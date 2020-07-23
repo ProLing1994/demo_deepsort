@@ -1,7 +1,12 @@
 #include "ncnn_centernet.h"
 #include <map>
 #include <string>
- 
+
+#ifdef _DEBUG
+#include <iostream>
+#include <time.h>
+#endif
+
 using namespace std;
 
 Centerobj::Centerobj()
@@ -16,8 +21,10 @@ int Centerobj::init(std::string model_path)
 {
 	// std::string param = model_path + "centernet_mbv2_voc.param";
 	// std::string bin= model_path + "centernet_mbv2_voc.bin";
-	std::string param = model_path + "vgg_FPN_centernet_ncnn.param";
-	std::string bin= model_path + "vgg_FPN_centernet_ncnn.bin";
+	// std::string param = model_path + "vgg_FPN_centernet_ncnn.param";
+	// std::string bin= model_path + "vgg_FPN_centernet_ncnn.bin";
+	std::string param = model_path + "vgg_FPN_0723_1_ncnn.param";
+	std::string bin= model_path + "vgg_FPN_0723_1_ncnn.bin";
 	net.load_param(param.data());
 	net.load_model(bin.data());
 	return 0;
@@ -49,27 +56,24 @@ int Centerobj::detect(ncnn::Mat & inblob, std::vector<ObjInfo>& objs, int resize
 		 return -1;
 	}
 
+	#ifdef _DEBUG
+		clock_t begin, end;	
+		begin = clock();
+	#endif
+
 	image_h = inblob.h;
 	image_w = inblob.w;
-
 
 	scale_w = (float)image_w / (float)resized_w;
 	scale_h = (float)image_h / (float)resized_h;
 
 	ncnn::Mat in;
-
 	dynamicScale(resized_w, resized_h);
 
-
-
-    float mean_vals_1[3]  = {0, 0, 0} ;
+	float mean_vals_1[3]  = {0, 0, 0} ;
 	float norm_vals_1[3]  = {1.0/255, 1.0/255, 1.0/255} ;
-//	float mean_vals_1[3]  = {0.485 * 255 , 0.456 * 255, 0.406 * 255} ;
-//	float norm_vals_1[3]  = {1.0/0.229/255, 1.0/0.224/255, 1.0/0.225/255} ;
-	// float norm_vals_1[3]  = {1.0/127.5,1.0/127.5,1.0/127.5} ;
 
 	inblob.substract_mean_normalize(mean_vals_1, norm_vals_1);
-
 
 	ncnn::Extractor ex = net.create_extractor();
 	ex.input("data", inblob);
@@ -78,9 +82,20 @@ int Centerobj::detect(ncnn::Mat & inblob, std::vector<ObjInfo>& objs, int resize
 	ex.extract("conv_blob27", scale);
 	ex.extract("conv_blob29", offset);
 	ex.extract("conv_blob28", id_feature);
-	
+
+	#ifdef _DEBUG
+		end = clock();
+		std::cout <<"ncnn forward time: " << 1.0*(end - begin) / CLOCKS_PER_SEC * 1000.0 << " ms." << std::endl;
+		begin = clock();
+	#endif
+
 	decode(heatmap, scale, offset, id_feature, objs, scoreThresh, nmsThresh);
-	
+
+	#ifdef _DEBUG
+		end = clock();
+		std::cout <<"ncnn decode time: " << 1.0*(end - begin) / CLOCKS_PER_SEC * 1000.0 << " ms." << std::endl;
+	#endif
+
 	return 0;
 }
 
@@ -174,7 +189,6 @@ void Centerobj::decode(ncnn::Mat & heatmap  , ncnn::Mat & scale, ncnn::Mat & off
 	std::vector<ObjInfo> objs_tmp;
 	for (int i = 0; i < ids.size() / 4; i++) {
 		
-		
 		int id_h = ids[4 * i];
 		int id_w = ids[4 * i + 1];
 		int cate_id = ids[4 * i + 2];
@@ -223,7 +237,7 @@ void Centerobj::decode(ncnn::Mat & heatmap  , ncnn::Mat & scale, ncnn::Mat & off
 	}
 
 	nms(objs_tmp, objs, nmsThresh);
-
+	
 	for (int k = 0; k < objs.size(); k++) {
 		objs[k].x1 *= d_scale_w*scale_w;
 		objs[k].y1 *= d_scale_h*scale_h;

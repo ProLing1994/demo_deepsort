@@ -37,7 +37,7 @@ namespace deepsort {
 
 		std::vector<MATCH_DATA>& matches = res.matches;
 		#ifdef _DEBUG
-		   printf("res.matches size = %d:\n", matches.size());
+		   std::cout << "res.matches size =: " << matches.size() << std::endl;
 		#endif
 		for(MATCH_DATA& data:matches) {
 			int track_idx = data.first;
