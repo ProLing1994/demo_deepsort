@@ -30,7 +30,7 @@ namespace deepsort {
 		~DeepSORT();
 
 		int init();
-    int load_detections(float* net_outputs);
+		int load_detections(std::vector<ObjInfo>& obj_info);
 		int update();
 	private:
     OptionsDeepSORT options_deepsort_;

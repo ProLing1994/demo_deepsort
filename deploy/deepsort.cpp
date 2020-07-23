@@ -19,8 +19,18 @@ namespace deepsort {
     return 0;
   }
 
-  int DeepSORT::load_detections(float* net_outputs) {
-    
+  int DeepSORT::load_detections(std::vector<ObjInfo>& obj_info) {
+    for(int i = 0; i < obj_info.size(); i++)
+    {
+      DETECTION_ROW box;
+      box.tlwh = DETECTBOX(obj_info[i].x1, obj_info[i].y1, obj_info[i].x2 - obj_info[i].x1, obj_info[i].y2 - obj_info[i].y1);    
+      for(int j = 0; j < 128; j++)
+      {
+        box.feature[j] = obj_info[i].ids_[j];
+      }
+      detections_.push_back(box);
+    }
+    return 0;
   }
 
   int DeepSORT::update() {
