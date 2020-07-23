@@ -1,8 +1,10 @@
 #include <iostream>
-#include <opencv2/opencv.hpp>
-#include "ncnn_centernet.h"
 #include <sys/time.h>
-#include "model.h"
+
+#include "opencv2/opencv.hpp"
+#include "net/ncnn_centernet.h"
+#include "utils/model.h"
+#include "deepsort.h" 
 
 float getElapse(struct timeval *tv1,struct timeval *tv2)
 {
@@ -131,6 +133,9 @@ int main(int argc, char** argv) {
   	// }
 	cap.open(str);
 	int i = 0;
+
+	deepsort::DeepSORT deep_sort;
+	deep_sort.init();
 	while (cv::waitKey(1) < 0)
     {
       // get frame from the video
@@ -182,11 +187,15 @@ int main(int argc, char** argv) {
 		// 	//std::cout<<"fff"<<std::endl;
 		// 	detections.push_back(box);
 		// }
+				
+		deep_sort.load_detections(obj_info);
+		deep_sort.update();
+
+		draw_objects(frame,obj_info,ratio, ratio1, i);
+		
 		gettimeofday(&tv2,&tz2);
 		float tc = getElapse(&tv1, &tv2);
 		std::cout << "耗时：" << tc << "ms" << std::endl;
-
-		draw_objects(frame,obj_info,ratio, ratio1, i);
 		i++;
 		// cv::imshow("test", image);
 		// cv::waitKey();

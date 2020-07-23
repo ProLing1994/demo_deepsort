@@ -25,16 +25,13 @@ endif(UNIX OR APPLE)
 
 # find OpenCV library
 find_package(OpenCV REQUIRED)
-if (OpenCV_FOUND)
-  message(STATUS "Found OpenCV Library: " ${OPENCV_INCLUDE_DIRS})
-  include_directories(${OPENCV_INCLUDE_DIRS})
-else (OpenCV_FOUND)
-  message(FATAL_ERROR "OpenCV not found.")
-endif()
 
 # find Eigen3 library
 find_package(Eigen3 REQUIRED)
 INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+
+# find ncnn library
+find_package(ncnn REQUIRED)
 
 # set default build type
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Set default build type to release")

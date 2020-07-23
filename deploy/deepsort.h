@@ -6,6 +6,7 @@
 
 #include "common/tracker.h"
 #include "utils/model.h"
+#include "net/ncnn_centernet.h"
 
 namespace deepsort {
 
@@ -32,6 +33,7 @@ namespace deepsort {
 		int init();
 		int load_detections(std::vector<ObjInfo>& obj_info);
 		int update();
+		int get_results(std::vector<ObjInfo>* obj_info, std::vector<int>* obj_id);
 	private:
     OptionsDeepSORT options_deepsort_;
 		std::unique_ptr<tracker> tracker_;

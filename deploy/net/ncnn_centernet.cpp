@@ -1,7 +1,8 @@
-#include "ncnn_centernet.h"
 #include <map>
 #include <string>
- 
+
+#include "ncnn_centernet.h"
+
 using namespace std;
 
 Centerobj::Centerobj()
