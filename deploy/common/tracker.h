@@ -4,9 +4,9 @@
 #include <vector>
 
 #include "nn_matching.h"
-#include "model.h"
 #include "kalmanfilter.h"
 #include "track.h"
+#include "../utils/model.h"
 
 namespace deepsort {
 

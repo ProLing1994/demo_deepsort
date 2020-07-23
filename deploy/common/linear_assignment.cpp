@@ -1,5 +1,6 @@
-#include "hungarianoper.h"
 #include <map>
+
+#include "hungarianoper.h"
 #include "linear_assignment.h"
 
 namespace deepsort {

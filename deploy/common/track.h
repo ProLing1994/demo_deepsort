@@ -1,9 +1,9 @@
 #ifndef DEEPSORT_DEPLOY_COMMON_TRACK_H
 #define DEEPSORT_DEPLOY_COMMON_TRACK_H
 
-#include "datatype.h"
-#include "model.h"
 #include "kalmanfilter.h"
+#include "../utils/datatype.h"
+#include "../utils/model.h"
 
 namespace deepsort {
 

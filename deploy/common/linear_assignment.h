@@ -1,7 +1,7 @@
 #ifndef DEEPSORT_DEPLOY_COMMON_LINEAR_ASSIGNMENT_H
 #define DEEPSORT_DEPLOY_COMMON_LINEAR_ASSIGNMENT_H
-#include "datatype.h"
 #include "tracker.h"
+#include "../utils/datatype.h"
 
 namespace deepsort {
 

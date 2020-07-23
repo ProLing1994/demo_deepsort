@@ -1,8 +1,8 @@
 #ifndef DEEPSORT_DEPLOY_COMMON_HUNGARIANOPER_H
 #define DEEPSORT_DEPLOY_COMMON_HUNGARIANOPER_H
 
-#include "munkres.h"
-#include "datatype.h"
+#include "../munkres/munkres.h"
+#include "../utils/datatype.h"
 
 namespace deepsort {
 

@@ -17,8 +17,8 @@
  *   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307 USA
  */
 
-#if !defined(_MUNKRES_H_)
-#define _MUNKRES_H_
+#ifndef DEEPSORT_DEPLOY_MUNKRES_MUNKRES_H 
+#define DEEPSORT_DEPLOY_MUNKRES_MUNKRES_H
 
 #include "matrix.h"
 
@@ -461,4 +461,4 @@ private:
 };
 
 
-#endif /* !defined(_MUNKRES_H_) */
+#endif /* DEEPSORT_DEPLOY_MUNKRES_MUNKRES_H */

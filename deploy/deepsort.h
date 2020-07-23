@@ -5,7 +5,7 @@
 #include <vector>
 
 #include "common/tracker.h"
-#include "common/model.h"
+#include "utils/model.h"
 
 namespace deepsort {
 
@@ -27,7 +27,7 @@ namespace deepsort {
 	class DeepSORT {
 	public:
 		DeepSORT();
-		~DeepSORT();
+		~DeepSORT();gi
 
 		int init();
     int load_detections(float* net_outputs);

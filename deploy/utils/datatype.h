@@ -1,5 +1,5 @@
-#ifndef _DEEPSORT_DEPLOY_COMMON_DATATYPE_H
-#define _DEEPSORT_DEPLOY_COMMON_DATATYPE_H
+#ifndef DEEPSORT_DEPLOY_UTILS_DATATYPE_H
+#define DEEPSORT_DEPLOY_UTILS_DATATYPE_H
 
 #include <cstddef>
 #include <vector>
@@ -39,4 +39,4 @@ namespace deepsort {
   //linear_assignment:
   typedef Eigen::Matrix<float, -1, -1, Eigen::RowMajor> DYNAMICM;
 }
-#endif // _DEEPSORT_DEPLOY_COMMON_DATATYPE_H
+#endif // DEEPSORT_DEPLOY_UTILS_DATATYPE_H

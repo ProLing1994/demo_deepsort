@@ -3,7 +3,7 @@
 
 #include <map>
 
-#include "datatype.h"
+#include "../utils/datatype.h"
 
 namespace deepsort {
 

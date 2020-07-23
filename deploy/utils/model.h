@@ -1,5 +1,5 @@
-#ifndef DEEPSORT_DEPLOY_COMMON_MODEL_H
-#define DEEPSORT_DEPLOY_COMMON_MODEL_H
+#ifndef DEEPSORT_DEPLOY_UTILS_MODEL_H
+#define DEEPSORT_DEPLOY_UTILS_MODEL_H
 
 #include "datatype.h"
 
@@ -23,4 +23,4 @@ namespace deepsort {
 	
 	typedef std::vector<DETECTION_ROW> DETECTIONS;
 }
-#endif // DEEPSORT_DEPLOY_COMMON_MODEL_H
+#endif // DEEPSORT_DEPLOY_UTILS_MODEL_H
