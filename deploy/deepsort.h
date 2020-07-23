@@ -33,7 +33,7 @@ namespace deepsort {
 		int init();
 		int load_detections(std::vector<ObjInfo>& obj_info);
 		int update();
-		int get_results(std::vector<ObjInfo>* obj_info, std::vector<int>* obj_id);
+		int get_results(std::vector<ObjInfo>& obj_info, std::vector<int>& obj_id);
 	private:
     OptionsDeepSORT options_deepsort_;
 		std::unique_ptr<tracker> tracker_;

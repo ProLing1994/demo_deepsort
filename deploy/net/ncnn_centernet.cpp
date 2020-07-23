@@ -1,8 +1,7 @@
+#include "ncnn_centernet.h"
 #include <map>
 #include <string>
-
-#include "ncnn_centernet.h"
-
+ 
 using namespace std;
 
 Centerobj::Centerobj()
@@ -59,18 +58,9 @@ int Centerobj::detect(ncnn::Mat & inblob, std::vector<ObjInfo>& objs, int resize
 
 	ncnn::Mat in;
 
-	//scale 
 	dynamicScale(resized_w, resized_h);
 
-//	std::cout<<scale_w<<std::endl;
-//	std::cout<<scale_h<<std::endl;
-//
-//	std::cout<<image_h<<std::endl;
-//	std::cout<<resized_h<<std::endl;
-//
-//	std::cout<<d_scale_h<<std::endl;
-//	std::cout<<d_scale_w<<std::endl;
-	//ncnn::resize_bilinear(inblob, in, d_w, d_h);
+
 
     float mean_vals_1[3]  = {0, 0, 0} ;
 	float norm_vals_1[3]  = {1.0/255, 1.0/255, 1.0/255} ;
@@ -83,16 +73,12 @@ int Centerobj::detect(ncnn::Mat & inblob, std::vector<ObjInfo>& objs, int resize
 
 	ncnn::Extractor ex = net.create_extractor();
 	ex.input("data", inblob);
-	
 	ncnn::Mat heatmap, scale, offset, id_feature;
 	ex.extract("Sigmoid_blob", heatmap);
 	ex.extract("conv_blob27", scale);
 	ex.extract("conv_blob29", offset);
 	ex.extract("conv_blob28", id_feature);
 	
-
-	
-
 	decode(heatmap, scale, offset, id_feature, objs, scoreThresh, nmsThresh);
 	
 	return 0;
@@ -165,16 +151,9 @@ void Centerobj::decode(ncnn::Mat & heatmap  , ncnn::Mat & scale, ncnn::Mat & off
 	int fea_c = heatmap.c;
 	int spacial_size = fea_w*fea_h;
 
-
-	std::cout<<heatmap.h<<std::endl;
-	std::cout<<heatmap.w<<std::endl;
-	std::cout<<id_feature.h<<std::endl;
-	std::cout<<id_feature.w<<std::endl;
-
 	float *heatmap_ = (float*)(heatmap.data);
 	float *scale0 = (float*)(scale.data);
 	float *scale1 = scale0 + spacial_size;
-
 
 	std::vector<float*> idd(128);
 
@@ -185,8 +164,6 @@ void Centerobj::decode(ncnn::Mat & heatmap  , ncnn::Mat & scale, ncnn::Mat & off
 		id0 += spacial_size;
 		idd[i] = id0;
 	}
-	
-	
 	
 	float *offset0 = (float*)(offset.data);
 	float *offset1 = offset0 + spacial_size;
@@ -212,38 +189,20 @@ void Centerobj::decode(ncnn::Mat & heatmap  , ncnn::Mat & scale, ncnn::Mat & off
 		float o0 = offset0[index];
 		float o1 = offset1[index];
 		std::vector<float> id_f(128);
-		
+	
 		for(int k = 0; k < 128; k++)
 		{
 			id_f[k] = idd[k][index];
 		}
-		
-		
-		// std::vector<float> idd;
-		// for(int j = 0; j < 128; j++)
-		// {
-		// 	idd[j] = idss[j][index];
-		// 	// std::cout<<id0[index]<<std::endl;
-		// 	// std::cout<<i<<std::endl;
-		// }
-		
-		
-		// std::cout << s0 << " " << s1 << " " << o0 << " " << o1 << std::endl;
 
 		float x1 =  (id_w + o1 + 0.5) * 4 - s0 / 2 > 0.f ? (id_w + o1 + 0.5) * 4 - s0 / 2 : 0;
-
 		float y1 =  (id_h + o0 + 0.5) * 4 - s1 / 2 > 0 ? (id_h + o0 + 0.5) * 4 - s1 / 2 : 0;
-		
 		float x2 = 0, y2 = 0;
 		x1 = x1 < (float)d_w ? x1 : (float)d_w;
-		
 		y1 = y1 < (float)d_h ? y1 : (float)d_h;
-	
 		x2 =  x1 + s0 < (float)d_w ? x1 + s0 : (float)d_w;
-		
 		y2 = y1 + s1 < (float)d_h ? y1 + s1 : (float)d_h;
        
-
 		ObjInfo objbox;
 		objbox.x1 = x1;
 		objbox.y1 = y1;

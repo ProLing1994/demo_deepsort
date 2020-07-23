@@ -36,13 +36,20 @@ namespace deepsort {
   int DeepSORT::update() {
     tracker_->predict();
     tracker_->update(detections_);
+    detections_.clear();
   }
 
-  int DeepSORT::get_results(std::vector<ObjInfo>* obj_info, std::vector<int>* obj_id) {
+  int DeepSORT::get_results(std::vector<ObjInfo>& obj_info, std::vector<int>& obj_id) {
     for(Track& track : tracker_->tracks) {
       if(!track.is_confirmed() || track.time_since_update > 1) continue;
-      obj_id->push_back(track.track_id);
+      obj_id.push_back(track.track_id);
       // TO DO: track.to_tlwh() -> obj_info
+      ObjInfo temp;
+      temp.x1 = track.to_tlwh()[0];
+      temp.x2 = track.to_tlwh()[2] + temp.x1;
+      temp.y1 = track.to_tlwh()[1];
+      temp.y2 = track.to_tlwh()[3] + temp.y1;
+      obj_info.push_back(temp);
     }
   }
 
