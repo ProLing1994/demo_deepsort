@@ -1,9 +1,12 @@
-#pragma once
-#include<vector>
-#include<iostream>
-#include<algorithm>
-#include<numeric>
-#include <ncnn/net.h>
+#ifndef DEEPSORT_DEPLOY_NET_NCNN_CENTERNET_H_
+#define DEEPSORT_DEPLOY_NET_NCNN_CENTERNET_H_
+#include <vector>
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+
+#include "ncnn/net.h"
+
 #define NMS_UNION 1
 #define NMS_MIN  2
 
@@ -16,7 +19,7 @@ typedef struct ObjInfo {
 	float area;
 	int label;
 	std::vector<float> ids_;
-};
+}ObjInfo;
 
 class Centerobj {
 public:
@@ -49,5 +52,4 @@ private:
 	int image_h;
 	int image_w;
 };
-
-
+#endif // DEEPSORT_DEPLOY_NET_NCNN_CENTERNET_H_

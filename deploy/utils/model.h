@@ -10,7 +10,7 @@
 // * feature: the rect's 128d feature.
 // */
 namespace deepsort {
-	
+
 	class DETECTION_ROW
 	{
 	public:
