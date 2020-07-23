@@ -32,15 +32,16 @@ public:
 		float scoreThresh = 0.2, float nmsThresh = 0.45);
 
 private:
-    void pretty_print(const ncnn::Mat& m);
+	void pretty_print(const ncnn::Mat& m);
 	void dynamicScale(float in_w, float in_h);
 	void genIds(float * heatmap, int h, int w,int c, float thresh, std::vector<float> &ids);
 	void nms(std::vector<ObjInfo>& input, std::vector<ObjInfo>& output, float nmsthreshold = 0.3,int type=NMS_MIN);
 	void decode(ncnn::Mat & heatmap  , ncnn::Mat &scale, ncnn::Mat &offset,ncnn::Mat & id_feature,
 		std::vector<ObjInfo>&objs, float scoreThresh, float nmsThresh);
+
 private:
 	ncnn::Net net;
-
+	
 	int d_h;
 	int d_w;
 	float d_scale_h;
