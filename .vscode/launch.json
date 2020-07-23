@@ -1,0 +1,30 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) demo",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/lib/Debug/demo",
+            "args": [
+                "/media/wdx/F6B28DDFB28DA529/centernet_mobilenetv2_ncnn/models/",
+                "/media/wdx/F6B28DDFB28DA529/centernet_mobilenetv2_ncnn/MOT16-031.avi",
+            ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/lib/Debug/",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}

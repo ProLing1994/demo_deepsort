@@ -1,7 +1,6 @@
 #include "track.h"
 
 namespace deepsort {
-
   Track::Track(KAL_MEAN& mean, KAL_COVA& covariance, int track_id, int n_init, int max_age, const FEATURE& feature) {
     this->mean = mean;
     this->covariance = covariance;
