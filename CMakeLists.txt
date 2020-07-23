@@ -33,6 +33,11 @@ INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
 # find ncnn library
 find_package(ncnn REQUIRED)
 
+# add D_DEBUG
+if (CMAKE_BUILD_TYPE STREQUAL Debug)
+  add_definitions(-D_DEBUG)
+endif()
+
 # set default build type
 set(CMAKE_BUILD_TYPE Release CACHE STRING "Set default build type to release")
 

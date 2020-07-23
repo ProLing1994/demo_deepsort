@@ -16,4 +16,4 @@ target_link_libraries(deepsort ${OpenCV_LIBS})
 # add test
 add_executable(demo demo.cpp ${NCNN_NET_FILES})
 target_link_libraries(demo deepsort ${OpenCV_LIBS} ${NCNN_LIBRARIES})
-target_link_libraries(demo -fopenmp)
+target_link_libraries(demo -fopenmp -DMY_inner_DEBUG)
