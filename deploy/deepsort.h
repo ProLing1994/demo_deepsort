@@ -27,7 +27,7 @@ namespace deepsort {
 	class DeepSORT {
 	public:
 		DeepSORT();
-		~DeepSORT();gi
+		~DeepSORT();
 
 		int init();
     int load_detections(float* net_outputs);
