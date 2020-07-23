@@ -1,9 +1,11 @@
-#ifndef _DEEPSORT_DEPLOY_DEEPSORT_H_
-#define _DEEPSORT_DEPLOY_DEEPSORT_H_
+#ifndef DEEPSORT_DEPLOY_DEEPSORT_H_
+#define DEEPSORT_DEPLOY_DEEPSORT_H_
 
+#include <memory>
 #include <vector>
 
-#include "common/model.h"
+#include "common/tracker.h"
+#include "utils/model.h"
 
 namespace deepsort {
 
@@ -11,9 +13,15 @@ namespace deepsort {
 		OptionsDeepSORT() {
 			nn_budget = 100;
 			max_cosine_distance = 0.2;
+			max_iou_distance = 0.7;
+			max_age = 30;
+			n_init = 3;
 		}
 		int nn_budget;
 		float max_cosine_distance;
+		float max_iou_distance;
+		int max_age;
+		int n_init;
 	};
 
 	class DeepSORT {
@@ -21,10 +29,13 @@ namespace deepsort {
 		DeepSORT();
 		~DeepSORT();
 
-    int load_detections(std::vector<ObjInfo>& obj_info);
+		int init();
+		int load_detections(std::vector<ObjInfo>& obj_info);
+		int update();
 	private:
     OptionsDeepSORT options_deepsort_;
-    std::vector<DETECTION_ROW> detections_;
+		std::unique_ptr<tracker> tracker_;
+    DETECTIONS detections_;
 	};
 }
-#endif // _DEEPSORT_DEPLOY_DEEPSORT_H_
+#endif // DEEPSORT_DEPLOY_DEEPSORT_H_
