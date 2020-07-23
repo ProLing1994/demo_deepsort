@@ -3,9 +3,7 @@
 #include<iostream>
 #include<algorithm>
 #include<numeric>
-#include "net.h"
-#include "model.h"
-
+#include <ncnn/net.h>
 #define NMS_UNION 1
 #define NMS_MIN  2
 
