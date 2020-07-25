@@ -6,20 +6,10 @@
 #include <numeric>
 
 #include "ncnn/net.h"
+#include "../deepsort.h"
 
 #define NMS_UNION 1
 #define NMS_MIN  2
-
-typedef struct ObjInfo {
-	float x1;
-	float y1;
-	float x2;
-	float y2;
-	float score;
-	float area;
-	int label;
-	std::vector<float> ids_;
-}ObjInfo;
 
 class Centerobj {
 public:

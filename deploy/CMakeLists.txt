@@ -11,10 +11,13 @@ source_group(deepsort_utils FILES ${DEEPSORT_UTILS_FILES})
 
 # deepsort dll library
 add_library(deepsort SHARED ${DEEPSORT_CORE_FILES} ${DEEPSORT_COMMON_FILES} ${DEEPSORT_MUNKRES_FILES} ${DEEPSORT_UTILS_FILES})
-target_link_libraries(deepsort ${OpenCV_LIBS})
+target_link_libraries(deepsort)
 
 # add test
-add_executable(demo demo.cpp ${NCNN_NET_FILES})
+add_executable(demo demo/demo.cpp ${NCNN_NET_FILES})
 target_link_libraries(demo deepsort ${OpenCV_LIBS} ${NCNN_LIBRARIES})
 target_link_libraries(demo -fopenmp)
 
+# add test
+add_executable(demo_test demo/demo_test.cpp)
+target_link_libraries(demo_test deepsort)

@@ -6,7 +6,18 @@
 
 #include "common/tracker.h"
 #include "utils/model.h"
-#include "net/ncnn_centernet.h"
+
+typedef struct ObjInfo {
+	float x1;
+	float y1;
+	float x2;
+	float y2;
+	float score;
+	float area;
+	int label;
+	std::vector<float> ids_;
+}ObjInfo;
+
 
 namespace deepsort {
 

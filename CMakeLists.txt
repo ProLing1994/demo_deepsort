@@ -27,8 +27,7 @@ endif(UNIX OR APPLE)
 find_package(OpenCV REQUIRED)
 
 # find Eigen3 library
-find_package(Eigen3 REQUIRED)
-INCLUDE_DIRECTORIES(${EIGEN3_INCLUDE_DIR})
+find_package(EIGEN REQUIRED)
 
 # find ncnn library
 find_package(ncnn REQUIRED)
