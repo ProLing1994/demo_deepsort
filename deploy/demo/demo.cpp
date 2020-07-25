@@ -50,9 +50,9 @@ static void draw_objects(const cv::Mat& bgr,
 				cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 0, 0));
 	}
 
-	cv::imwrite(output_path + "test" + std::to_string(i) + ".jpg", image);
-	// cv::imshow("frame", image);
-	// cv::waitKey(1);
+	// cv::imwrite(output_path + "test" + std::to_string(i) + ".jpg", image);
+	cv::imshow("frame", image);
+	cv::waitKey(1);
 }
 
 int main(int argc, char** argv) {

@@ -24,9 +24,9 @@ namespace deepsort {
 	struct OptionsDeepSORT {
 		OptionsDeepSORT() {
 			nn_budget = 100;
-			max_cosine_distance = 0.2;
+			max_cosine_distance = 0.6;
 			max_iou_distance = 0.7;
-			max_age = 300;
+			max_age = 70;
 			n_init = 3;
 		}
 		int nn_budget;
