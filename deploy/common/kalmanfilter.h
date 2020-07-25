@@ -26,6 +26,7 @@ namespace deepsort {
             bool only_position = false);
   
   public:
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW
     static const double chi2inv95[10];
 
   private:

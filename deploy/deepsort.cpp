@@ -20,7 +20,7 @@ namespace deepsort {
   }
 
   int DeepSORT::load_detections(std::vector<ObjInfo>& obj_info) {
-    for(int i = 0; i < obj_info.size(); i++)
+    for(unsigned int i = 0; i < obj_info.size(); i++)
     {
       DETECTION_ROW box;
       box.tlwh = DETECTBOX(obj_info[i].x1, obj_info[i].y1, obj_info[i].x2 - obj_info[i].x1, obj_info[i].y2 - obj_info[i].y1);    
@@ -37,6 +37,7 @@ namespace deepsort {
     tracker_->predict();
     tracker_->update(detections_);
     detections_.clear();
+    return 0;
   }
 
   int DeepSORT::get_results(std::vector<ObjInfo>& obj_info, std::vector<int>& obj_id) {
@@ -51,6 +52,7 @@ namespace deepsort {
       temp.y2 = track.to_tlwh()[3] + temp.y1;
       obj_info.push_back(temp);
     }
+    return 0;
   }
 
 }

@@ -19,8 +19,8 @@ namespace deepsort {
 		this->n_init = n_init;
 		this->_next_idx = 1;
 		this->metric = new NearNeighborDisMetric(METRIC_TYPE::cosine,
-																							max_cosine_distance, 
-																							nn_budget);
+												max_cosine_distance, 
+												nn_budget);
 		this->kf = new KalmanFilter();
 		this->tracks.clear();
 	}

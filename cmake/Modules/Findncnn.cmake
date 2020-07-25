@@ -1,4 +1,4 @@
-# - Try to find MNN
+# - Try to find NCNN
 #
 # The following variables are optionally searched for defaults
 #  NCNN_DIR:            Base directory where all NCNN components are found
@@ -11,7 +11,7 @@
 
 include(FindPackageHandleStandardArgs)
 
-set(NCNN_DIR "/home/huanyuan/code/ncnn/build/" CACHE PATH "Folder contains package NCNN")
+set(NCNN_DIR "/home/workspace/RMAI/yuanhuan/code/ncnn/build/" CACHE PATH "Folder contains package NCNN")
 
 find_path(NCNN_INCLUDE_DIR ncnn/net.h
   HINTS ${NCNN_DIR}
