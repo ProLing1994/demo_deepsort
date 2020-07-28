@@ -58,7 +58,11 @@ namespace deepsort {
   public:
     Track(KAL_MEAN& mean, KAL_COVA& covariance, int track_id,
           int n_init, int max_age, const FEATURE& feature);
+
+		// Kalman filter prediction step
     void predit(KalmanFilter *kf);
+
+		// Kalman filter updation step
     void update(KalmanFilter * const kf, const DETECTION_ROW &detection);
     void mark_missed();
     bool is_confirmed();

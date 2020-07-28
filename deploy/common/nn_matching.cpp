@@ -15,8 +15,8 @@ namespace deepsort {
     }
 
     this->mating_threshold = matching_threshold;
-    this->budget = budget;
-    this->samples.clear();
+    this->budget = budget;//len(feature);
+    this->samples.clear();//map(id, feature);
   }
 
   DYNAMICM NearNeighborDisMetric::distance(
@@ -27,10 +27,11 @@ namespace deepsort {
     for(int target:targets) {
       cost_matrix.row(idx) = (this->*_metric)(this->samples[target], features);
       idx++;
-      }
+    }
     return cost_matrix;
   }
-
+  
+  //update sample, map(id, feature)
   void NearNeighborDisMetric::partial_fit(
       std::vector<TRACKER_DATA>& tid_feats,
       std::vector<int>& active_targets) {
@@ -97,16 +98,17 @@ namespace deepsort {
   }
 
   Eigen::VectorXf NearNeighborDisMetric::_nneuclidean_distance(
-      const FEATURESS &x, const FEATURESS &y) {
+      const FEATURESS &x, 
+      const FEATURESS &y) {
     MatrixXf distances = _pdist(x,y);
     VectorXf res = distances.colwise().maxCoeff().transpose();
     res = res.array().max(VectorXf::Zero(res.rows()).array());
     return res;
   }
 
-  Eigen::MatrixXf
-  NearNeighborDisMetric::_pdist(const FEATURESS &x, const FEATURESS &y)
-  {
+  Eigen::MatrixXf NearNeighborDisMetric::_pdist(
+      const FEATURESS &x, 
+      const FEATURESS &y) {
     int len1 = x.rows(), len2 = y.rows();
     if(len1 == 0 || len2 == 0) {
         return Eigen::MatrixXf::Zero(len1, len2);
@@ -118,12 +120,12 @@ namespace deepsort {
     return res;
   }
 
-  Eigen::MatrixXf
-  NearNeighborDisMetric::_cosine_distance(
-      const FEATURESS & a,
-      const FEATURESS& b, bool data_is_normalized) {
+  Eigen::MatrixXf NearNeighborDisMetric::_cosine_distance(
+      const FEATURESS &a,
+      const FEATURESS &b, 
+      bool data_is_normalized) {
     if(data_is_normalized == true) {
-        //undo:
+        //TODO:
         assert(false);
       }
     MatrixXf res = 1. - (a*b.transpose()).array();

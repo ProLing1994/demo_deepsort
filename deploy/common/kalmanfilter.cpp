@@ -36,9 +36,9 @@ namespace deepsort {
     for(int i = 0; i < 4; i++) mean_vel(i) = 0;
 
     KAL_MEAN mean;
-    for(int i = 0; i < 8; i++){
-        if(i < 4) mean(i) = mean_pos(i);
-        else mean(i) = mean_vel(i - 4);
+    for(int i = 0; i < 8; i++) {
+      if(i < 4) mean(i) = mean_pos(i);
+      else mean(i) = mean_vel(i - 4);
     }
 
     KAL_MEAN std;
@@ -75,8 +75,12 @@ namespace deepsort {
     motion_cov_diagonal.block<1,4>(0,4) = std_vel;
     motion_cov_diagonal = motion_cov_diagonal.array().square();
 
+    // Q
     KAL_COVA motion_cov = motion_cov_diagonal.asDiagonal();
+
+    // x' = Fx
     (*mean) = this->_motion_mat * (*mean).transpose();
+    // P' = FPF^T+Q
     (*covariance) = this->_motion_mat * (*covariance) *(_motion_mat.transpose()) + motion_cov;
   }
 
@@ -87,12 +91,15 @@ namespace deepsort {
             1e-1, 
             _std_weight_position * mean(3);
     
+    // Hx'
     KAL_HMEAN mean1 = _update_mat * mean.transpose();
+
+    // HP'H^T
     KAL_HCOVA covariance1 = _update_mat * covariance * (_update_mat.transpose());
     Eigen::Matrix<float, 4, 4> diag = std.asDiagonal();
     diag = diag.array().square().matrix();
     covariance1 += diag;
-  //    covariance1.diagonal() << diag;
+    // covariance1.diagonal() << diag; 
     return std::make_pair(mean1, covariance1);
   }
 
@@ -100,7 +107,7 @@ namespace deepsort {
       const KAL_MEAN &mean,
       const KAL_COVA &covariance,
       const DETECTBOX &measurement) {
-    KAL_HDATA pa = project(mean, covariance);
+    KAL_HDATA pa = project(mean, covariance);// Hx' and HP'H^T
     KAL_HMEAN projected_mean = pa.first;
     KAL_HCOVA projected_cov = pa.second;
 
@@ -111,10 +118,15 @@ namespace deepsort {
     //np.dot(covariance, self._upadte_mat.T).T,
     //check_finite=False).T
     Eigen::Matrix<float, 4, 8> B = (covariance * (_update_mat.transpose())).transpose();
+    // K 
     Eigen::Matrix<float, 8, 4> kalman_gain = (projected_cov.llt().solve(B)).transpose(); // eg.8x4
     Eigen::Matrix<float, 1, 4> innovation = measurement - projected_mean; //eg.1x4
     auto tmp = innovation*(kalman_gain.transpose());
+
+    // x = x' + Ky
     KAL_MEAN new_mean = (mean.array() + tmp.array()).matrix();
+
+    // P = (I - KH)P'
     KAL_COVA new_covariance = covariance - kalman_gain*projected_cov*(kalman_gain.transpose());
     return std::make_pair(new_mean, new_covariance);
   }
