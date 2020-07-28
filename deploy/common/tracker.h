@@ -31,7 +31,7 @@ namespace deepsort {
 		float max_iou_distance;
 		int max_age;
 		int n_init;
-		int _next_idx;
+		int _next_idx;//_next_idx += 1 in func _initiate_track;
 		NearNeighborDisMetric* metric;
 		KalmanFilter* kf;
 		std::vector<Track> tracks;
@@ -39,8 +39,7 @@ namespace deepsort {
 	private:    
 		void _match(const DETECTIONS& detections, TRACHER_MATCHD& res);
 		void _initiate_track(const DETECTION_ROW& detection);
-
-	public:
+		
 		DYNAMICM gated_matric(std::vector<Track>& tracks,
 													const DETECTIONS& dets,
 													const std::vector<int>& track_indices,

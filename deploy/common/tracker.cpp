@@ -33,76 +33,60 @@ namespace deepsort {
 
 	void tracker::update(const DETECTIONS &detections) {
 		TRACHER_MATCHD res;
-		_match(detections, res);
+		_match(detections, res);//matching;
 
 		std::vector<MATCH_DATA>& matches = res.matches;
 		#ifdef _DEBUG
-		   std::cout << "res.matches size =: " << matches.size() << std::endl;
+			std::cout << "res.matches size =: " << matches.size() << std::endl;
 		#endif
 		for(MATCH_DATA& data:matches) {
 			int track_idx = data.first;
 			int detection_idx = data.second;
 			#ifdef _DEBUG
-			       printf("\t%d == %d;\n", track_idx, detection_idx);
+				printf("\t%d == %d;\n", track_idx, detection_idx);
 			#endif
 			tracks[track_idx].update(this->kf, detections[detection_idx]);
 		}
 		std::vector<int>& unmatched_tracks = res.unmatched_tracks;
 		#ifdef _DEBUG
-		   printf("res.unmatched_tracks size = %d\n", unmatched_tracks.size());
+			printf("res.unmatched_tracks size = %d\n", unmatched_tracks.size());
 		#endif
+
 		for(int& track_idx:unmatched_tracks) {
-				this->tracks[track_idx].mark_missed();
+			this->tracks[track_idx].mark_missed();
 		}
 		std::vector<int>& unmatched_detections = res.unmatched_detections;
 		#ifdef _DEBUG
-		   printf("res.unmatched_detections size = %d\n", unmatched_detections.size());
-		#endif
-		for(int& detection_idx:unmatched_detections) {
-				this->_initiate_track(detections[detection_idx]);
-		}
-		#ifdef _DEBUG
-		   int size = tracks.size();
-		   printf("now track size = %d\n", size);
-		#endif
-		std::vector<Track>::iterator it;
-		for(it = tracks.begin(); it != tracks.end();) {
-				if((*it).is_deleted()) it = tracks.erase(it);
-				else ++it;
-		}
-		#ifdef _DEBUG
-		   printf("update track size = %d\n", tracks.size());
+			printf("res.unmatched_detections size = %d\n", unmatched_detections.size());
 		#endif
 
-		/* old version:
-		//update distance metric:
-		FEATURESS features;
-		vector<int> targets;
-		vector<int> active_targets;
-		int pos = 0;
-		for(Track track:tracks) {
-				if(track.is_confirmed() == false) continue;
-				active_targets.push_back(track.track_id);
-				features.row(pos) = track.features;
-				int rows = track.features.rows();
-				pos += rows;
-				for(int i = 0; i < rows; i++) targets.push_back(track.track_id);
-				//attention!!!
-				//track.features.clear();
-				track.features = Eigen::Matrix<float, -1, 128, Eigen::RowMajor>(0,128);
+		for(int& detection_idx:unmatched_detections) {
+			this->_initiate_track(detections[detection_idx]);
 		}
-		this->metric->partial_fit(features, targets, active_targets);
-		*/
+		#ifdef _DEBUG
+			int size = tracks.size();
+			printf("now track size = %d\n", size);
+		#endif
+
+		std::vector<Track>::iterator it;
+		for(it = tracks.begin(); it != tracks.end();) {
+			if((*it).is_deleted()) it = tracks.erase(it);
+			else ++it;
+		}
+		#ifdef _DEBUG
+			printf("update track size = %d\n", tracks.size());
+		#endif
+
 		std::vector<int> active_targets;
 		std::vector<TRACKER_DATA> tid_features;
 		for (Track& track:tracks) {
-				if(track.is_confirmed() == false) continue;
-				active_targets.push_back(track.track_id);
-				tid_features.push_back(std::make_pair(track.track_id, track.features));
-				FEATURESS t = FEATURESS(0, 128);
-				track.features = t;
+			if(track.is_confirmed() == false) continue;
+			active_targets.push_back(track.track_id);
+			tid_features.push_back(std::make_pair(track.track_id, track.features));
+			FEATURESS t = FEATURESS(0, 128);
+			track.features = t;
 		}
-  		this->metric->partial_fit(tid_features, active_targets);
+		this->metric->partial_fit(tid_features, active_targets);
 }
 
 void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
@@ -115,6 +99,7 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 			idx++;
 		}
 
+		// cascade matching
 		TRACHER_MATCHD matcha = linear_assignment::getInstance()->matching_cascade(
 								this, &tracker::gated_matric,
 								this->metric->mating_threshold,
@@ -122,18 +107,22 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 								this->tracks,
 								detections,
 								confirmed_tracks);
+
+		// iou_track_candidates: unconfirmed tracks and unmatched tracks which time_since_update == 1
 		std::vector<int> iou_track_candidates;
 		iou_track_candidates.assign(unconfirmed_tracks.begin(), unconfirmed_tracks.end());
-		std::vector<int>::iterator it;		
+		std::vector<int>::iterator it;
 		for(it = matcha.unmatched_tracks.begin(); it != matcha.unmatched_tracks.end();) {
 			int idx = *it;
-			if(tracks[idx].time_since_update == 1) { //push into unconfirmed
+			if(tracks[idx].time_since_update == 1) {//cascade matching failed, and last frame matched successfully;
 				iou_track_candidates.push_back(idx);
 				it = matcha.unmatched_tracks.erase(it);
 				continue;
 			}
 			++it;
 		}
+
+		// iou matching
 		TRACHER_MATCHD matchb = linear_assignment::getInstance()->min_cost_matching(
 								this, &tracker::iou_cost,
 								this->max_iou_distance,
@@ -141,10 +130,12 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 								detections,
 								iou_track_candidates,
 								matcha.unmatched_detections);
-		//get result:
+
+		// get result:
 		res.matches.assign(matcha.matches.begin(), matcha.matches.end());
 		res.matches.insert(res.matches.end(), matchb.matches.begin(), matchb.matches.end());
-		//unmatched_tracks;
+		
+		// unmatched_tracks;
 		res.unmatched_tracks.assign(
 								matcha.unmatched_tracks.begin(),
 								matcha.unmatched_tracks.end());
@@ -157,8 +148,7 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 								matchb.unmatched_detections.end());
 	}
 
-	void tracker::_initiate_track(const DETECTION_ROW &detection)
-	{
+	void tracker::_initiate_track(const DETECTION_ROW &detection) {
 			KAL_DATA data = kf->initiate(detection.to_xyah());
 			KAL_MEAN mean = data.first;
 			KAL_COVA covariance = data.second;

@@ -5,15 +5,15 @@ namespace deepsort {
     this->mean = mean;
     this->covariance = covariance;
     this->track_id = track_id;
-    this->hits = 1;
+    this->hits = 1;//used with _n_init;
     this->age = 1;
-    this->time_since_update = 0;
+    this->time_since_update = 0;//time_since_update += 1 sinse predit, time_since_update = 0 sinse update, used with _max_age;
     this->state = TrackState::Tentative;
     features = FEATURESS(1, 128);
     features.row(0) = feature;//features.rows() must = 0;
 
-    this->_n_init = n_init;
-    this->_max_age = max_age;
+    this->_n_init = n_init;// hits >= _n_init, state -> Confirmed;
+    this->_max_age = max_age;//time_since_update > _max_age, state -> Deleted ;
   }
 
   void Track::predit(KalmanFilter *kf) {
