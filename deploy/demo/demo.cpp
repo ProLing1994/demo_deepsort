@@ -35,7 +35,7 @@ static void draw_objects(const cv::Mat& bgr,
 		int id = track_id[i];
 		cv::rectangle(image, cv::Point(obj.x1 /ratio, obj.y1 / ratio1), cv::Point(obj.x2 /ratio, obj.y2 /ratio1), cv::Scalar(255, 0, 0));
 		char text[256];
-		sprintf(text, "%d", id);
+		sprintf(text, "%s: %d", class_names[0], id);
 		int baseLine = 0;
 		cv::Size label_size = cv::getTextSize(text, cv::FONT_HERSHEY_SIMPLEX, 0.5, 1, &baseLine);
 		int x = obj.x1 / ratio;
@@ -50,9 +50,9 @@ static void draw_objects(const cv::Mat& bgr,
 				cv::FONT_HERSHEY_SIMPLEX, 0.5, cv::Scalar(255, 0, 0));
 	}
 
-	// cv::imwrite(output_path + "test" + std::to_string(i) + ".jpg", image);
-	cv::imshow("frame", image);
-	cv::waitKey(1);
+	cv::imwrite(output_path + "test" + std::to_string(i) + ".jpg", image);
+	// cv::imshow("frame", image);
+	// cv::waitKey(1);
 }
 
 int main(int argc, char** argv) {
@@ -60,8 +60,8 @@ int main(int argc, char** argv) {
 	std::string video_path = argv[2];
 	std::string output_path = argv[3];
 	
+	bool load_video = false;
 	cv::VideoCapture cap;
-	// cv::VideoWriter video;
 	cv::Mat frame;
 	int frame_id = 0;
 	float ratio = 256 *1.0 / 1280;
@@ -72,7 +72,9 @@ int main(int argc, char** argv) {
 	centerobj.init(model_path);
 	deepsort::DeepSORT deep_sort;
 	deep_sort.init();
-	cap.open(video_path);
+	if (load_video) {
+		cap.open(video_path);
+	}
 	
 	while (1) {
 
@@ -84,16 +86,25 @@ int main(int argc, char** argv) {
 		std::vector<ObjInfo> obj_info;
 
 		// get frame from the video
-		cap >> frame;
+		if (load_video) {
+			cap >> frame;
+		}
+		else {
+			std::string imagepath = video_path + "test" + std::to_string(frame_id) + ".jpg";
+			std::cout << "imagepath" << imagepath << std::endl;
+			frame = cv::imread(imagepath, 1);
+		}
 
 		// Stop the program if reached end of video
 		if (frame.empty())
 		{
-			std::cout << "Done processing !!!" <<  std::endl;
+			std::cout << "Done processing !!!" << std::endl;
 			std::cout << "Output file is stored to " << output_path <<  std::endl;
 			// cv::waitKey(3000);
 			break;
 		}
+		// output frame
+		// cv::imwrite(output_path + "test" + std::to_string(frame_id) + ".jpg", frame);
 
 		cv::resize(frame, img_resize, cv::Size(256, 192), cv::INTER_LINEAR);
 		ncnn::Mat inmat = ncnn::Mat::from_pixels(img_resize.data, ncnn::Mat::PIXEL_RGB2BGR, img_resize.cols, img_resize.rows);

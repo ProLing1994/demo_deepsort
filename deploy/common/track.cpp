@@ -1,5 +1,9 @@
 #include "track.h"
 
+#ifdef _DEBUG
+#include <iostream>
+#endif
+
 namespace deepsort {
   Track::Track(KAL_MEAN& mean, KAL_COVA& covariance, int track_id, int n_init, int max_age, const FEATURE& feature) {
     this->mean = mean;
@@ -33,11 +37,17 @@ namespace deepsort {
   }
 
   void Track::update(KalmanFilter * const kf, const DETECTION_ROW& detection)
-  {
+  { 
+    #ifdef _DEBUG
+			std::cout << "track.update -> kf.update, begin" << std::endl;
+		#endif
     KAL_DATA pa = kf->update(this->mean, this->covariance, detection.to_xyah());
     this->mean = pa.first;
     this->covariance = pa.second;
-
+    #ifdef _DEBUG
+			std::cout << "track.update -> kf.update, end" << std::endl;
+		#endif
+    
     featuresAppendOne(detection.feature);
     //    this->features.row(features.rows()) = detection.feature;
     this->hits += 1;

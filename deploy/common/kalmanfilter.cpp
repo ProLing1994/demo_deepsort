@@ -1,6 +1,10 @@
 #include "kalmanfilter.h"
 #include <Eigen/Cholesky>
 
+#ifdef _DEBUG
+#include <iostream>
+#endif
+
 namespace deepsort {
 
   const double KalmanFilter::chi2inv95[10] = {
@@ -90,9 +94,21 @@ namespace deepsort {
             _std_weight_position * mean(3),
             1e-1, 
             _std_weight_position * mean(3);
-    
+
+    #ifdef _DEBUG
+			std::cout << "track.update -> kf.update -> kf.project -> mean, begin " << std::endl;
+			std::cout << "_update_mat: " << std::endl;
+			std::cout << _update_mat << std::endl;
+			std::cout << "mean: " << std::endl;
+			std::cout <<  mean.transpose() << std::endl;
+		#endif
     // Hx'
     KAL_HMEAN mean1 = _update_mat * mean.transpose();
+    #ifdef _DEBUG
+			std::cout << "Hx': " << std::endl;
+			std::cout << mean1 << std::endl;
+      std::cout << "track.update -> kf.update -> kf.project -> mean, end " << std::endl;
+		#endif
 
     // HP'H^T
     KAL_HCOVA covariance1 = _update_mat * covariance * (_update_mat.transpose());
@@ -100,6 +116,9 @@ namespace deepsort {
     diag = diag.array().square().matrix();
     covariance1 += diag;
     // covariance1.diagonal() << diag; 
+    #ifdef _DEBUG
+			std::cout << "HP'H^T': " << covariance1 << std::endl;
+		#endif
     return std::make_pair(mean1, covariance1);
   }
 
@@ -107,10 +126,15 @@ namespace deepsort {
       const KAL_MEAN &mean,
       const KAL_COVA &covariance,
       const DETECTBOX &measurement) {
+    #ifdef _DEBUG
+			std::cout << "track.update -> kf.update -> kf.project, begin" << std::endl;
+		#endif
     KAL_HDATA pa = project(mean, covariance);// Hx' and HP'H^T
     KAL_HMEAN projected_mean = pa.first;
     KAL_HCOVA projected_cov = pa.second;
-
+    #ifdef _DEBUG
+			std::cout << "track.update -> kf.update -> kf.project, end" << std::endl;
+		#endif
     //chol_factor, lower =
     //scipy.linalg.cho_factor(projected_cov, lower=True, check_finite=False)
     //kalmain_gain =

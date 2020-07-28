@@ -10,8 +10,10 @@ TARGET:= libdeepsort.so
 
 CC		:= arm-himix200-linux-g++ 
 AR		:= arm-himix200-linux-ar
-CFLAGS	:= -mcpu=cortex-a53 -mfloat-abi=softfp -mfpu=neon-vfpv4 -mno-unaligned-access -fno-aggressive-loop-optimizations \
-		-W -Wall -O3 -std=c++11 -fpic -fno-strict-aliasing -traditional -Wno-reorder -Wno-char-subscripts 
+#CFLAGS	:= -mcpu=cortex-a53 -mfloat-abi=softfp -mfpu=neon-vfpv4 -mno-unaligned-access -fno-aggressive-loop-optimizations \
+#		-g -D_DEBUG -W -Wall -std=c++11 -fpic -fno-strict-aliasing -traditional -Wno-reorder -Wno-char-subscripts 
+CFLAGS	:= -mcpu=cortex-a53 -mfloat-abi=softfp -mno-unaligned-access -fno-aggressive-loop-optimizations\
+		-W -Wall -std=c++11 -O3 -fpic -fno-strict-aliasing -traditional -Wno-reorder -Wno-char-subscripts 
 INCLUDE	:= -I/home/workspace/RMAI/yuanhuan/code/eigen-git-mirror/build/install/include/eigen3
 STATIC_LIB:=
 LIBS	+= $(STATIC_LIB)
