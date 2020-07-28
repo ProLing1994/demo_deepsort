@@ -2,7 +2,6 @@
 #include "linear_assignment.h"
 
 #ifdef _DEBUG
-#include <string>
 #include <iostream>
 #endif
 
@@ -33,39 +32,46 @@ namespace deepsort {
 
 	void tracker::update(const DETECTIONS &detections) {
 		TRACHER_MATCHD res;
+
+		#ifdef _DEBUG
+			std::cout << "_match, begin" << std::endl;
+		#endif
 		_match(detections, res);//matching;
+		#ifdef _DEBUG
+			std::cout << "_match, end" << std::endl;
+		#endif
 
 		std::vector<MATCH_DATA>& matches = res.matches;
+
 		#ifdef _DEBUG
-			std::cout << "res.matches size =: " << matches.size() << std::endl;
+		std::cout << "res.matches size =: " << matches.size() << std::endl;
 		#endif
 		for(MATCH_DATA& data:matches) {
 			int track_idx = data.first;
 			int detection_idx = data.second;
 			#ifdef _DEBUG
-				printf("\t%d == %d;\n", track_idx, detection_idx);
+				std::cout << "res.matches track_idx =:" << track_idx << " and detection_idx =: " << detection_idx << std::endl;
+				std::cout << "track.update, begin" << std::endl;
 			#endif
 			tracks[track_idx].update(this->kf, detections[detection_idx]);
+			#ifdef _DEBUG
+			std::cout << "track.update, end" << std::endl;
+			#endif
 		}
 		std::vector<int>& unmatched_tracks = res.unmatched_tracks;
-		#ifdef _DEBUG
-			printf("res.unmatched_tracks size = %d\n", unmatched_tracks.size());
-		#endif
 
 		for(int& track_idx:unmatched_tracks) {
 			this->tracks[track_idx].mark_missed();
 		}
 		std::vector<int>& unmatched_detections = res.unmatched_detections;
-		#ifdef _DEBUG
-			printf("res.unmatched_detections size = %d\n", unmatched_detections.size());
-		#endif
 
 		for(int& detection_idx:unmatched_detections) {
 			this->_initiate_track(detections[detection_idx]);
 		}
 		#ifdef _DEBUG
-			int size = tracks.size();
-			printf("now track size = %d\n", size);
+			std::cout << "res.unmatched_tracks size =: " << unmatched_tracks.size() << std::endl;
+			std::cout << "res.unmatched_detections size =: " << unmatched_detections.size() << std::endl;
+			std::cout << "after initiate, track size =: " << tracks.size() << std::endl;
 		#endif
 
 		std::vector<Track>::iterator it;
@@ -74,7 +80,7 @@ namespace deepsort {
 			else ++it;
 		}
 		#ifdef _DEBUG
-			printf("update track size = %d\n", tracks.size());
+			std::cout << "after update, track size =: " << tracks.size() << std::endl;
 		#endif
 
 		std::vector<int> active_targets;
@@ -98,7 +104,10 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 			else unconfirmed_tracks.push_back(idx);
 			idx++;
 		}
-
+		
+		#ifdef _DEBUG	
+			std::cout << "matching_cascade, begin" << std::endl;
+		#endif
 		// cascade matching
 		TRACHER_MATCHD matcha = linear_assignment::getInstance()->matching_cascade(
 								this, &tracker::gated_matric,
@@ -107,6 +116,9 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 								this->tracks,
 								detections,
 								confirmed_tracks);
+		#ifdef _DEBUG	
+			std::cout << "matching_cascade, end" << std::endl;
+		#endif
 
 		// iou_track_candidates: unconfirmed tracks and unmatched tracks which time_since_update == 1
 		std::vector<int> iou_track_candidates;
@@ -122,6 +134,9 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 			++it;
 		}
 
+		#ifdef _DEBUG	
+			std::cout << "iou_cascade, begin" << std::endl;
+		#endif
 		// iou matching
 		TRACHER_MATCHD matchb = linear_assignment::getInstance()->min_cost_matching(
 								this, &tracker::iou_cost,
@@ -130,6 +145,9 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 								detections,
 								iou_track_candidates,
 								matcha.unmatched_detections);
+		#ifdef _DEBUG	
+			std::cout << "iou_cascade, end" << std::endl;
+		#endif
 
 		// get result:
 		res.matches.assign(matcha.matches.begin(), matcha.matches.end());
@@ -242,9 +260,10 @@ void tracker::_match(const DETECTIONS &detections, TRACHER_MATCHD &res) {
 			float area_candidates = candidates(i, 2) * candidates(i, 3);
 			res[i] = area_intersection/(area_bbox + area_candidates - area_intersection);
 		}
-		#ifdef _DEBUG
-			std::cout << res << std::endl;
-		#endif
+		// #ifdef _DEBUG
+		// 	std::cout << "iou: " << std::endl;
+		// 	std::cout << res << std::endl;
+		// #endif
 		return res;
 	}
 }
