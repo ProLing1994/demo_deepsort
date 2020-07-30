@@ -23,8 +23,11 @@ int Centerobj::init(std::string model_path)
 	// std::string bin= model_path + "centernet_mbv2_voc.bin";
 	// std::string param = model_path + "vgg_FPN_centernet_ncnn.param";
 	// std::string bin= model_path + "vgg_FPN_centernet_ncnn.bin";
-	std::string param = model_path + "vgg_FPN_0723_1_ncnn.param";
-	std::string bin= model_path + "vgg_FPN_0723_1_ncnn.bin";
+	// std::string param = model_path + "resnet_centernet_0729_ncnn.param";
+	// std::string bin= model_path + "resnet_centernet_0729_ncnn.bin";
+	std::string param = model_path + "vgg_FPN_0728_ncnn.param";
+	std::string bin= model_path + "vgg_FPN_0728_ncnn.bin";
+	std::cout << param << std::endl;
 	net.load_param(param.data());
 	net.load_model(bin.data());
 	return 0;
@@ -35,9 +38,9 @@ void Centerobj::pretty_print(const ncnn::Mat& m)
     for (int q=0; q<m.c; q++)
     {
         const float* ptr = m.channel(q);
-        for (int y=0; y<1; y++)
+        for (int y=0; y<20; y++)
         {
-            for (int x=0; x<1; x++)
+            for (int x=0; x<20; x++)
             {
                 printf("%f ", ptr[x]);
             }
@@ -83,6 +86,7 @@ int Centerobj::detect(ncnn::Mat & inblob, std::vector<ObjInfo>& objs, int resize
 	ex.extract("conv_blob29", offset);
 	ex.extract("conv_blob28", id_feature);
 
+	// pretty_print(heatmap);
 	#ifdef _DEBUG
 		end = clock();
 		std::cout <<"ncnn forward time: " << 1.0*(end - begin) / CLOCKS_PER_SEC * 1000.0 << " ms." << std::endl;
